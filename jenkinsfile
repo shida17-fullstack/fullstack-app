@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Build Backend Image') {
+            steps {
+                script {
+                    // Construir la imagen Docker del backend
+                    sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-backend:latest ./api'
+                }
+            }
+        }
+        
+        stage('Build Frontend Image') {
+            steps {
+                script {
+                    // Construir la imagen Docker del frontend
+                    sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-frontend:latest ./site'
+                }
+            }
+        }
+        
+        stage('Unit Tests') {
+            steps {
+                // Ejecutar pruebas unitarias con Jest y SuperTest
+                sh 'npm install --prefix ./api'
+                sh 'npm run test --prefix ./api'
+            }
+        }
+        
+        stage('Deploy to Kubernetes') {
+            steps {
+                // Aplicar despliegamiento del backend
+                sh 'kubectl apply -f ./api/deployment-backend.yaml'
+                
+                // Aplicar despliegamiento del frontend
+                sh 'kubectl apply -f ./site/deployment-frontend.yaml'
+            }
+        }
+    }
+}

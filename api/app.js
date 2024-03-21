@@ -1,81 +1,36 @@
-const express = require('express')
-const app = express()
-const passport = require('passport')
-const {
-  users
-} = require('./controllers')
+require('dotenv').config({ path: './config/.env' });
+const express = require('express');
+const cors = require('cors');
+const passport = require('passport');
 
-/**
- * Configure Passport
- */
+// Configuraciones y middleware
 
-try { require('./config/passport')(passport) }
-catch (error) { console.log(error) }
+const app = express();  // Inicializar express 
 
-/**
- * Configure Express.js Middleware
- */
+// Configurar middleware para analizar el cuerpo JSON
+app.use(express.json());
 
-// Enable CORS
-app.use(function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', '*')
-  res.header('Access-Control-Allow-Headers', '*')
-  res.header('x-powered-by', 'serverless-express')
-  next()
-})
+// Configura cors para permitir solicitudes desde http://localhost:3002
+app.use(cors({ origin: 'http://localhost:3002' }));
 
-// Initialize Passport and restore authentication state, if any, from the session
-app.use(passport.initialize())
-app.use(passport.session())
+// Rutas Publicas y Protegidas
+const publicRoutes = require('./routes/publicRoutes');
+const protectedRoutes = require('./routes/protectedRoutes');
 
-// Enable JSON use
-app.use(express.json())
+// Ruta de Captura-All
+const catchAllRoute = require('./routes/catchAllRoute');
 
-// Since Express doesn't support error handling of promises out of the box,
-// this handler enables that
-const asyncHandler = fn => (req, res, next) => {
-  return Promise
-    .resolve(fn(req, res, next))
-    .catch(next);
-};
 
-/**
- * Routes - Public
- */
+// Configure Passport
+require('./config/passport')(passport);
 
-app.options(`*`, (req, res) => {
-  res.status(200).send()
-})
+// Configuraciones adicionales y otros middleware
 
-app.post(`/users/register`, asyncHandler(users.register))
+// Uso de rutas
+app.use('/public', publicRoutes);
+app.use('/protected', passport.authenticate('jwt', { session: false }), protectedRoutes);
+app.use(catchAllRoute);
 
-app.post(`/users/login`, asyncHandler(users.login))
 
-app.get(`/test/`, (req, res) => {
-  res.status(200).send('Request received')
-})
-
-/**
- * Routes - Protected
- */
-
-app.post(`/user`, passport.authenticate('jwt', { session: false }), asyncHandler(users.get))
-
-/**
- * Routes - Catch-All
- */
-
-app.get(`/*`, (req, res) => {
-  res.status(404).send('Route not found')
-})
-
-/**
- * Error Handler
- */
-app.use(function (err, req, res, next) {
-  console.error(err)
-  res.status(500).json({ error: `Internal Serverless Error - "${err.message}"` })
-})
-
-module.exports = app
+// Exportar la aplicación
+module.exports = app;

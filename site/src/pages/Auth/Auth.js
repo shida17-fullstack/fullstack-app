@@ -1,249 +1,186 @@
-import React, { Component } from 'react'
-import {
-  Link,
-  withRouter,
-} from 'react-router-dom'
-import Loading from '../../fragments/Loading'
-import styles from './Auth.module.css'
-import {
-  userRegister,
-  userLogin,
-  userGet,
-  saveSession,
-} from '../../utils'
+import React, { Component } from 'react';
+import { Link, withRouter } from 'react-router-dom';
+import Loading from '../../fragments/Loading';
+import styles from './Auth.module.css';
+import config from '../../config/config';
+import { userGet, saveSession, requestApi } from '../../utils';
 
 class Auth extends Component {
-
   constructor(props) {
-    super(props)
-
-    const pathName = window.location.pathname.replace('/', '')
-
-    this.state = {}
-    this.state.state = pathName
-    this.state.loading = true
-    this.state.error = null
-    this.state.formEmail = ''
-    this.state.formPassword = ''
-
-    // Bindings
-    this.handleFormInput = this.handleFormInput.bind(this)
-    this.handleFormSubmit = this.handleFormSubmit.bind(this)
-    this.handleFormTypeChange = this.handleFormTypeChange.bind(this)
+    super(props);
+    this.state = {
+      loading: false,
+      formEmail: '',
+      formPassword: '',
+      formUsername: '',
+      formRole: '',
+      formError: '',
+    };
+    this.handleFormInput = this.handleFormInput.bind(this);
+    this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.handleRegisterClick = this.handleRegisterClick.bind(this);
+    this.handleLoginClick = this.handleLoginClick.bind(this);
   }
 
-  /**
-   * Component did mount
-   */
-  componentDidMount() {
-    this.setState({
-      loading: false
-    })
-
-    // Clear query params
-    const url = document.location.href
-    window.history.pushState({}, '', url.split('?')[0])
-  }
-
-  /**
-   * Handles a form change
-   */
-  handleFormTypeChange(type) {
-    this.setState({ state: type },
-      () => {
-        this.props.history.push(`/${type}`)
-      })
-  }
-
-  /**
-   * Handle text changes within form fields
-   */
   handleFormInput(field, value) {
-    value = value.trim()
-
-    const nextState = {}
-    nextState[field] = value
-
-    this.setState(Object.assign(this.state, nextState))
+    value = value.trim();
+    const nextState = {};
+    nextState[field] = value;
+    this.setState(nextState);
   }
 
-  /**
-   * Handles form submission
-   * @param {object} evt 
-   */
   async handleFormSubmit(evt) {
-    evt.preventDefault()
+    evt.preventDefault();
+    console.log('Formulario enviado');
+    this.setState({ loading: true });
+    const { formEmail, formPassword, formUsername, formRole } = this.state;
 
-    this.setState({ loading: true })
-
-    // Validate email
-    if (!this.state.formEmail) {
+    if (!formEmail || !formPassword) {
       return this.setState({
+        formError: 'Correo electrónico y contraseña son obligatorios',
         loading: false,
-        formError: 'email is required'
-      })
+      });
     }
 
-    // Validate password
-    if (!this.state.formPassword) {
-      return this.setState({
-        loading: false,
-        formError: 'password is required'
-      })
-    }
-
-    let token
     try {
-      if (this.state.state === 'register') {
-        token = await userRegister(this.state.formEmail, this.state.formPassword)
-      } else {
-        token = await userLogin(this.state.formEmail, this.state.formPassword)
+      const apiUrl = config.domains.api;
+      let token;
+      if (this.props.authType === 'register') {
+        if (!formUsername || !formRole) {
+          return this.setState({
+            formError: 'Todos los campos son obligatorios',
+            loading: false,
+          });
+        }
+        const requestBody = {
+          email: formEmail,
+          password: formPassword,
+          username: formUsername,
+          role: formRole,
+        };
+        token = await this.sendFormData(requestBody, 'register');
+        console.log('Token generado:', token);
+        const userData = await userGet(token.token, apiUrl);
+        saveSession(userData.user.id, formEmail, token.token);
+        this.setState({ loading: false });
+        console.log('Redirigiendo a /public/users/login');
+        this.props.history.push('/public/users/login');
+
+      } else if (this.props.authType === 'login') {
+        token = await this.sendFormData({ email: formEmail, password: formPassword }, 'login');
+        console.log('Token generado:', token);
+        const userData = await userGet(token.token, apiUrl);
+        saveSession(userData.user.id, formEmail, token.token);
+        this.setState({ loading: false });
+        console.log('Redirigiendo a /dashboard');
+        this.props.history.push('/dashboard');
       }
     } catch (error) {
-      console.log(error)
-      if (error.message) {
-        this.setState({
-          formError: error.message,
-          loading: false
-        })
-      } else {
-        this.setState({
-          formError: 'Sorry, something unknown went wrong.  Please try again.',
-          loading: false
-        })
-      }
-      return
+      console.error('Error en la solicitud:', error);
+      this.setState({
+        formError: error.message || 'Lo siento, ocurrió un error desconocido. Por favor, inténtalo de nuevo.',
+        loading: false,
+      });
     }
+  }
 
-    // Fetch user record and set session in cookie
-    let user = await userGet(token.token)
-    user = user.user
-    saveSession(user.id, user.email, token.token)
+  async sendFormData(data, route) {
+    try {
+      const response = await requestApi(route, config.method, data);
+      return response;
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      throw error;
+    }
+  }
 
-    window.location.replace('/')
+  handleRegisterClick() {
+    console.log('Redirigiendo a /public/users/register');
+    this.props.history.push('/public/users/register');
+  }
+
+  handleLoginClick() {
+    console.log('Redirigiendo a /public/users/login');
+    this.props.history.push('/public/users/login');
   }
 
   render() {
-
     return (
       <div className={`${styles.container} animateFadeIn`}>
         <div className={styles.containerInner}>
-
-          { /* Logo */}
-
-          <Link to='/' className={`${styles.logo}`}>
-            <img
-              draggable='false'
-              src={'./fullstack-app-title.png'}
-              alt='serverless-fullstack-application'
-            />
+          <Link to='/' className={styles.logo}>
+            <img draggable='false' src='/fullstack-app-title.png' alt='serverless-fullstack-application' />
           </Link>
-
-          { /* Loading */}
-
-          {this.state.loading && (
-            <div>
-              {< Loading className={styles.containerLoading} />}
-            </div>
-          )}
-
-          { /* Registration Form */}
-
+          {this.state.loading && <div><Loading className={styles.containerLoading} /></div>}
           {!this.state.loading && (
-            <div className={styles.formType}>
-              <div
-                className={
-                  `${styles.formTypeRegister} 
-                ${this.state.state === 'register' ? styles.formTypeActive : ''}`}
-                onClick={(e) => { this.handleFormTypeChange('register') }}>
-                Register
-              </div>
-              <div
-                className={
-                  `${styles.formTypeSignIn} 
-                ${this.state.state === 'login' ? styles.formTypeActive : ''}`}
-                onClick={(e) => { this.handleFormTypeChange('login') }}>
-                Sign-In
-              </div>
-            </div>
-          )}
-
-          {this.state.state === 'register' && !this.state.loading && (
             <div className={styles.containerRegister}>
-
               <form className={styles.form} onSubmit={this.handleFormSubmit}>
                 <div className={styles.formField}>
-                  <label className={styles.formLabel}>email</label>
+                  <label className={styles.formLabel}>Correo electrónico</label>
                   <input
                     type='text'
-                    placeholder='yours@example.com'
+                    placeholder='tucorreo@example.com'
                     className={styles.formInput}
                     value={this.state.formEmail}
-                    onChange={(e) => { this.handleFormInput('formEmail', e.target.value) }}
+                    onChange={(e) => this.handleFormInput('formEmail', e.target.value)}
                   />
                 </div>
                 <div className={styles.formField}>
-                  <label className={styles.formLabel}>password</label>
+                  <label className={styles.formLabel}>Contraseña</label>
                   <input
                     type='password'
-                    placeholder='your password'
+                    placeholder='tu contraseña'
                     className={styles.formInput}
                     value={this.state.formPassword}
-                    onChange={(e) => { this.handleFormInput('formPassword', e.target.value) }}
+                    onChange={(e) => this.handleFormInput('formPassword', e.target.value)}
                   />
                 </div>
-
+                {this.props.authType === 'register' && (
+                  <div>
+                    <div className={styles.formField}>
+                      <label className={styles.formLabel}>Nombre de usuario</label>
+                      <input
+                        type='text'
+                        placeholder='tu nombre de usuario'
+                        className={styles.formInput}
+                        value={this.state.formUsername}
+                        onChange={(e) => this.handleFormInput('formUsername', e.target.value)}
+                      />
+                    </div>
+                    <div className={styles.formField}>
+                      <label className={styles.formLabel}>Rol</label>
+                      <input
+                        type='text'
+                        placeholder='tu rol'
+                        className={styles.formInput}
+                        value={this.state.formRole}
+                        onChange={(e) => this.handleFormInput('formRole', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
                 {this.state.formError && (
                   <div className={styles.formError}>{this.state.formError}</div>
                 )}
-
-                <input
+                <button
                   className={`buttonPrimaryLarge ${styles.formButton}`}
                   type='submit'
-                  value='Register'
-                />
-
+                >
+                  {this.props.authType === 'register' ? 'Registrar' : 'Iniciar sesión'}
+                </button>
               </form>
-            </div>
-          )}
-
-          {this.state.state === 'login' && !this.state.loading && (
-            <div className={styles.containerSignIn}>
-
-              <form className={styles.form} onSubmit={this.handleFormSubmit}>
-                <div className={styles.formField}>
-                  <label className={styles.formLabel}>email</label>
-                  <input
-                    type='text'
-                    placeholder='yours@example.com'
-                    className={styles.formInput}
-                    value={this.state.formEmail}
-                    onChange={(e) => { this.handleFormInput('formEmail', e.target.value) }}
-                  />
-                </div>
-                <div className={styles.formField}>
-                  <label className={styles.formLabel}>password</label>
-                  <input
-                    type='password'
-                    placeholder='your password'
-                    className={styles.formInput}
-                    value={this.state.formPassword}
-                    onChange={(e) => { this.handleFormInput('formPassword', e.target.value) }}
-                  />
-                </div>
-
-                {this.state.formError && (
-                  <div className={styles.formError}>{this.state.formError}</div>
-                )}
-
-                <input className={`buttonPrimaryLarge ${styles.formButton}`} type='submit' value='Sign In' />
-              </form>
+              <div className={styles.switchAuthType}>
+                <span>{this.props.authType === 'register' ? '¿Ya tienes una cuenta?' : '¿No tienes una cuenta?'}</span>
+                <button className={`${styles.switchButton} ${styles.customButton}`} onClick={this.props.authType === 'register' ? this.handleLoginClick : this.handleRegisterClick}>
+                  {this.props.authType === 'register' ? 'Iniciar sesión' : 'Registrarse'}
+                </button>
+              </div>
             </div>
           )}
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default withRouter(Auth)
+export default withRouter(Auth);

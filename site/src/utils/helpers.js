@@ -1,29 +1,29 @@
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
 
 /**
- * Format Org and Username correctly for the Serverless Platform backend
+ * Formatear Org y Username correctamente para el backend de Serverless Platform
  */
 export const formatOrgAndUsername = (name = '') => {
-   name = name.toString().toLowerCase().replace(/[^a-z\d-]+/gi, '-')
-   // Remove multiple instances of hyphens
-   name = name.replace(/-{2,}/g, '-')
+   name = name.toString().toLowerCase().replace(/[^a-z\d-]+/gi, '-');
+   // Eliminar múltiples instancias de guiones
+   name = name.replace(/-{2,}/g, '-');
    if (name.length > 40) {
-     name = name.substring(0, 40)
+     name = name.substring(0, 40);
    }
-   return name
-}
+   return name;
+};
 
 /**
- * Parse query parameters in a URL
+ * Analizar parámetros de consulta en una URL
  * @param {*} searchString 
  */
 export const parseQueryParams = (searchString = null) => {
   if (!searchString) {
-    return null
+    return null;
   }
 
-  // Clone string
-  let clonedParams = (' ' + searchString).slice(1)
+  // Clonar cadena
+  let clonedParams = (' ' + searchString).slice(1);
 
   return clonedParams
     .substr(1)
@@ -36,41 +36,46 @@ export const parseQueryParams = (searchString = null) => {
           [decodeURIComponent(currentValue.shift())]: decodeURIComponent(currentValue.pop())
         }),
       {}
-    )
-}
+    );
+};
 
 /**
- * Parse hash fragment parameters in a URL
+ * Analizar fragmentos de hash en una URL
  */
 export const parseHashFragment = (hashString) => {
-  const hashData = {}
-  let hash = decodeURI(hashString)
-  hash = hash.split('&')
+  const hashData = {};
+  let hash = decodeURI(hashString);
+  hash = hash.split('&');
   hash.forEach((val) => {
-    val = val.replace('#', '')
-    hashData[val.split('=')[0]] = val.split('=')[1]
-  })
-  return hashData
-}
+    val = val.replace('#', '');
+    hashData[val.split('=')[0]] = val.split('=')[1];
+  });
+  return hashData;
+};
 
 /**
- * Save session in browser cookie
+ * Guardar sesión en cookie del navegador
  */
 export const saveSession = (userId, userEmail, userToken) => {
-  Cookies.set('serverless', { userId, userEmail, userToken })
-}
+  Cookies.set('serverless', { userId, userEmail, userToken });
+  console.log('Sesión guardada:', { userId, userEmail, userToken });
+};
 
 /**
- * Get session in browser cookie
+ * Obtener sesión en cookie del navegador
  */
 export const getSession = () => {
-  const data = Cookies.get('serverless')
-  return data ? JSON.parse(data) : null
-}
+  const data = Cookies.get('serverless');
+  const session = data ? JSON.parse(data) : null;
+  console.log('Sesión recuperada:', session);
+  return session;
+};
+
 
 /**
- * Delete session in browser cookie
+ * Eliminar sesión en cookie del navegador
  */
 export const deleteSession = () => {
-  Cookies.remove('serverless')
-}
+  Cookies.remove('serverless');
+  console.log('Sesión eliminada');
+};

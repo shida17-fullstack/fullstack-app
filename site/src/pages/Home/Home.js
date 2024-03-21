@@ -1,59 +1,32 @@
-import React, { Component } from 'react'
-import {
-  Link,
-  withRouter
-} from 'react-router-dom'
-import styles from './Home.module.css'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import styles from './Home.module.css';
 
 class Home extends Component {
-
-  constructor(props) {
-    super(props)
-    this.state = {}
-  }
-
-  async componentDidMount() { }
-
   render() {
-
     return (
       <div className={`${styles.container} animateFadeIn`}>
         <div className={styles.containerInner}>
-
-          { /* Hero Artwork */}
-
           <div className={`${styles.heroArtwork} animateFlicker`}>
-            <img
-              draggable='false'
-              src={'./fullstack-app-artwork.png'}
-              alt='serverless-fullstack-application'
-            />
+            <img draggable='false' src={'./fullstack-app-artwork.png'} alt='serverless-fullstack-application' />
           </div>
           <div className={`${styles.heroTitle}`}>
-            <img
-              draggable='false'
-              src={'./fullstack-app-title.png'}
-              alt='serverless-fullstack-application'
-            />
+            <img draggable='false' src={'./fullstack-app-title.png'} alt='serverless-fullstack-application' />
           </div>
-
-          { /* Hero Description */}
-
           <div className={`${styles.heroDescription}`}>
-            A serverless full-stack application built with AWS Lambda, AWS HTTP API, Express.js, React & AWS DynamoDB.
+          Aplicación sin servidor en GCP con Cloud Build, Storage, Kubernetes y pruebas automatizadas con Jenkins
           </div>
-
           { /* Call To Action */}
 
           <div className={`${styles.containerCta}`}>
 
-            <Link to='/register'>
+            <Link to='/public/users/register'>
               <button className={`buttonPrimaryLarge`}>
-                Register
+                Registro
               </button>
             </Link>
 
-            <Link to='/login' className={`${styles.linkSignIn}`}>sign-in</Link>
+            <Link to='/public/users/login' className={`${styles.linkSignIn}`}>Iniciar Sesion</Link>
           </div>
         </div>
       </div>
@@ -61,4 +34,4 @@ class Home extends Component {
   }
 }
 
-export default withRouter(Home)
+export default Home;

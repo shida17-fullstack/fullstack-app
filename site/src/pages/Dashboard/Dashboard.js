@@ -68,7 +68,7 @@ class Dashboard extends Component {
             </div>
 
             <div className={`${styles.welcomeMessage}`}>
-              Welcome to your serverless fullstack dashboard...
+            Bienvenido a tu panel de control de aplicación fullstack sin servidor...
             </div>
 
           </div>

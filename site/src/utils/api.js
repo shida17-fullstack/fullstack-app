@@ -1,71 +1,91 @@
+import config from '../config/config';
+
 /**
- * Utils: Back-end
+ * Registra un nuevo usuario.
+ * @param {string} email - Correo electrónico del usuario.
+ * @param {string} password - Contraseña del usuario.
+ * @param {string} username - Nombre de usuario del usuario.
+ * @param {string} role - Rol del usuario.
+ * @returns {Promise} - Promesa que se resuelve con la respuesta de la API.
  */
-
-import config from '../config'
-
-/**
- * Register a new user
- */
-export const userRegister = async (email, password) => {
-  return await requestApi('/users/register', 'POST', { email, password })
-}
+export const userRegister = async (email, password, username, role) => {
+  console.log(`Calling requestApi from userRegister with method: ${config.method}`);
+  return await requestApi('register', config.method, { email, password, username, role });
+};
 
 /**
- * Login a new user
+ * Inicia sesión de un usuario.
+ * @param {string} email - Correo electrónico del usuario.
+ * @param {string} password - Contraseña del usuario.
+ * @returns {Promise} - Promesa que se resuelve con la respuesta de la API.
  */
 export const userLogin = async (email, password) => {
-  return await requestApi('/users/login', 'POST', { email, password })
-}
+  console.log(`Calling requestApi from userLogin with method: ${config.method}`);
+  return await requestApi('login', config.method, { email, password });
+};
 
 /**
- * userGet
+ * Obtiene los datos del usuario.
+ * @param {string} token - Token de autenticación del usuario.
+ * @returns {Promise} - Promesa que se resuelve con la respuesta de la API.
  */
 export const userGet = async (token) => {
-  return await requestApi('/user', 'POST', null, {
+  console.log(`Calling requestApi from userGet with method: ${config.method}`);
+  return await requestApi('userGet', config.method, null, {
     Authorization: `Bearer ${token}`
-  })
-}
+  });
+};
 
 /**
- * API request to call the backend
+ * Petición API para llamar al backend.
+ * @param {string} route - Ruta de la API.
+ * @param {string} method - Método HTTP de la petición.
+ * @param {Object|null} data - Datos a enviar en la petición (por defecto es null).
+ * @param {Object} headers - Cabeceras de la petición (por defecto es un objeto vacío).
+ * @returns {Promise} - Promesa que se resuelve con los datos obtenidos de la API.
  */
 export const requestApi = async (
-  path = '',
-  method = 'GET',
+  route = '',
+  method = config.method,
   data = null,
-  headers = {}) => {
-
-  // Check if API URL has been set
+  headers = {}
+) => {
+  // Verificar si se ha configurado la URL de la API
   if (!config?.domains?.api) {
-    throw new Error(`Error: Missing API Domain – Please add the API domain from your serverless Express.js back-end to this front-end application.  You can do this in the "site" folder, in the "./config.js" file.  Instructions are listed there and in the documentation.`)
+    throw new Error(`Error: Falta el dominio de la API. Por favor, agrega el dominio de la API de tu backend Express.js sin servidor a esta aplicación front-end.`);
   }
 
-  // Prepare URL
-  if (!path.startsWith('/')) {
-    path = `/${path}`
-  }
-  const url = `${config.domains.api}${path}`
+  // Obtener la ruta desde la configuración de rutas
+  const path = config.routes[route];
 
-  // Set headers
+  // Lanzar un error si la ruta no se encuentra
+  if (!path) {
+    throw new Error(`Error: Ruta '${route}' no encontrada en la configuración.`);
+  }
+
+  // Preparar la URL
+  const url = `${config.domains.api}${path}`;
+
+  // Establecer las cabeceras
   headers = Object.assign(
     { 'Content-Type': 'application/json' },
     headers
-  )
+  );
 
-  // Default options are marked with *
+  // Las opciones por defecto están marcadas con *
   const response = await fetch(url, {
     method: method.toUpperCase(),
     mode: 'cors',
     cache: 'no-cache',
     headers,
     body: data ? JSON.stringify(data) : null
-  })
+  });
 
-  if (response.status < 200 || response.status >= 300) {
-    const error = await response.json()
-    throw new Error(error.error)
+  // Lanzar un error si la respuesta no es satisfactoria
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Fallo al obtener datos del servidor.');
   }
 
-  return await response.json()
-}
+  return await response.json();
+};

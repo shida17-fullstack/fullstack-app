@@ -1,12 +1,12 @@
 .container {
   display: flex;
   flex-direction: column;
-  align-content: center;
+  align-items: center;
   justify-content: center;
   box-sizing: border-box;
   overflow: hidden;
   width: 100%;
-  height: 100vh;
+  height: 100vh; /* Ajusta la altura al 100% del viewport */
 }
 
 .containerInner {
@@ -15,39 +15,48 @@
   box-sizing: border-box;
   background: #000;
   width: 100%;
-  height: 100%;
-  align-self: center;
+  align-items: center;
+  justify-content: center;
   max-width: 700px;
-  padding: 50px 15px 30px 15px;
+  padding: 30px 15px; /* Aumenta el padding para proporcionar más espacio vertical */
 }
+
 
 .containerLoading {
   display: flex;
-  flex-direction: row;
+  justify-content: center; /* Cambiado de align-content a justify-content */
+  align-items: center; /* Cambiado de align-content a align-items */
   width: 100%;
   height: auto;
-  justify-content: center;
-  align-content: center;
   padding: 160px 0 0 0;
 }
 
 .logo {
   display: flex;
-  flex-direction: row;
-  box-sizing: border-box;
-  align-content: center;
   justify-content: center;
+  box-sizing: border-box;
   width: 100%;
+  
 }
 
 .logo img {
-  width: auto;
-  height: auto;
-  align-self: center;
-  max-height: 100%;
-  max-width: 400px;
+  max-width: 300px; /* Ajustado el ancho máximo del logo */
+  height: auto; /* Mantener la proporción de aspecto */
+}
+
+
+.formType {
+  display: flex;
+  flex-direction: row;
+  margin: 26px auto 0px auto;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 22px;
+  color: rgba(255,255,255,0.6);
+  text-transform: lowercase;
   user-select: none;
 }
+
 
 .error {
   display: flex;
@@ -74,21 +83,6 @@
   font-size: 22px;
 }
 
-.containerRegister {}
-
-.containerSignIn {}
-
-.formType {
-  display: flex;
-  flex-direction: row;
-  margin: 26px auto 0px auto;
-  width: 100%;
-  padding: 10px 0;
-  font-size: 22px;
-  color: rgba(255,255,255,0.6);
-  text-transform: lowercase;
-  user-select: none;
-}
 
 .formTypeRegister {
   display: flex;
@@ -132,7 +126,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-bottom: 25px;
+  margin-bottom: 15px; /* Ajusta el margen inferior entre los campos del formulario */
 }
 
 
@@ -147,7 +141,7 @@
 .formInput {
   text-align: center;
   font-size: 22px;
-  padding: 10px 0px 22px 0px;
+  padding: 10px 0px 10px 0px;
   border-bottom: 1.5px solid rgba(255,255,255,0.4);
   border-top: 1.5px solid transparent;
   border-right: 1.5px solid transparent;
@@ -178,7 +172,7 @@
 }
 
 .formButton {
-  margin: 16px auto 0 auto!important;
+  margin: 10px auto 6px auto!important;
 }
 
 .formButton:hover {
@@ -228,4 +222,45 @@
 .githubLink:hover a {
   cursor: pointer;
   opacity: 1;
+}
+
+.successMessage {
+  background-color: #4caf50; /* Color de fondo verde */
+  color: white; /* Color de texto blanco */
+  padding: 10px; /* Espaciado interno */
+  margin-bottom: 10px; /* Margen inferior */
+  border-radius: 5px; /* Bordes redondeados */
+}
+
+.switchAuthType {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Alinea los elementos con espacio entre ellos */
+  align-items: center; /* Alinea verticalmente al centro */
+}
+
+.switchButton {
+  margin-left: 10px; /* Agrega un margen a la izquierda del botón */
+}
+
+.customButton {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.customButton:hover {
+  background-color: #45a049;
+}
+
+.customButton:active {
+  background-color: #367a38;
 }

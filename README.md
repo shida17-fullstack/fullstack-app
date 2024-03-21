@@ -1,111 +1,76 @@
-[![Serverless Fullstack Application Express React DynamoDB AWS Lambda AWS HTTP API](https://s3.amazonaws.com/assets.github.serverless/components/readme-serverless-framework-fullstack-application.png
-)](https://www.serverless-fullstack-app.com)
+## Acerca de: Pipeline de Integración Continua y Despliegue Continuo (CI/CD) en Google Cloud Platform
 
-A complete, serverless, full-stack application built on AWS Lambda, AWS HTTP API, Express.js, React and DynamoDB.
+Este repositorio contiene los archivos necesarios para configurar un pipeline de CI/CD utilizando Google Cloud Platform (GCP), Cloud Build, Secret Manager, Storage y Kubernetes. A continuación, se explica cada archivo y su función en el proceso de automatización.
 
-#### Live Demo: [https://www.serverless-fullstack-app.com](https://www.serverless-fullstack-app.com)
+### Archivos de Configuración
 
-## Quick Start
+#### Kubernetes
+- **deployment-backend.yaml:** Este archivo describe el despliegue del backend en Kubernetes. Define un Deployment con tres réplicas del contenedor backend, especificando la imagen Docker a utilizar (`gcr.io/jenkinsgpc/my-backend:v1`) y el puerto en el que el contenedor expone su servicio (puerto 3000). También incluye un Service para exponer el backend externamente a través de un balanceador de carga.
+- **deployment-frontend.yaml:** Similar al archivo anterior, este describe el despliegue del frontend en Kubernetes. Define un Deployment con tres réplicas del contenedor frontend, especificando la imagen Docker a utilizar (`gcr.io/jenkinsgpc/my-frontend:v1`) y el puerto en el que el contenedor expone su servicio (puerto 80).
 
-Install the latest version of the Serverless Framework:
+#### Docker
+- **Dockerfile (Backend):** Este archivo describe la configuración para construir la imagen Docker del backend. Utiliza la imagen base de Node.js 14, instala las dependencias de la aplicación, copia los archivos de la aplicación y expone el puerto 3000. Finalmente, especifica el comando para ejecutar la aplicación.
+- **Dockerfile (Frontend):** Similar al archivo anterior, este describe la configuración para construir la imagen Docker del frontend. Utiliza la imagen base de Nginx Alpine, copia los archivos compilados del frontend, copia la configuración específica del entorno y expone el puerto 80.
 
+#### Cloud Build
+- **cloudbuild.yaml:** Este archivo describe los pasos necesarios para realizar la construcción y el almacenamiento de las imágenes Docker en Google Cloud Storage. Primero, construye la imagen Docker del backend y luego la del frontend. Especifica las imágenes a almacenar y la ubicación del bucket de Cloud Storage.
+
+#### Jenkinsfile
+- **Jenkinsfile:** Este archivo contiene la definición del pipeline de Jenkins. Tiene varias etapas, incluyendo la construcción de las imágenes Docker del backend y frontend, la ejecución de pruebas unitarias y el despliegue en Kubernetes.
+
+### Archivos de Configuración Adicionales
+
+#### Env File (.env)
+El archivo `.env` (backend) contiene las variables de entorno necesarias para la configuración del backend. A continuación se muestra un ejemplo de cómo configurar las variables relevantes para Cloud Storage y Secret Manager de GCP:
+
+```plaintext
+# Cambiar a true si utiliza clave Secret Manager de GCP 
+USE_SECRET_MANAGER=false
+
+# Cambiar a false si utiliza almacenamiento en la nube Storage GCP 
+USE_LOCAL_STORAGE=true
+
+GCP_TOKEN_SECRET=nombre_variable_secret_manager_gcp
 
 ```
-npm i -g serverless
-```
+#### Configuración del Archivo `config.prod.js`
 
-After installation, make sure you connect your AWS account by setting a provider in the org setting page on the [Serverless Dashboard](https://app.serverless.com).
+Una vez que hayas desplegado tu backend en Google Cloud Platform y tengas la URL correspondiente, necesitarás actualizar el archivo `config.prod.js` en tu aplicación frontend para reflejar esta configuración.
 
-Then, initialize the `fullstack-app` template:
+Este archivo se encuentra en la ruta `site/src/config/config.prod.js` y contiene la configuración para la URL del servicio de backend.
 
-```
-serverless init fullstack-app
-cd fullstack-app
-```
+##### Pasos para Configurar `config.prod.js`:
 
-Then, add the following environment variables in an `.env` file in the root directory, like this:
+1. **Obtener la URL del Servicio Backend Desplegado en GCP:**
+   Después de que tu backend haya sido desplegado correctamente en Google Cloud Platform, recibirás la URL correspondiente.
 
-```text
-# This signs you JWT tokens used for auth.  Enter a random string in here that's ~40 characters in length.
-tokenSecret=yourSecretKey
+2. **Actualizar el Archivo `config.prod.js`:**
+   Abre el archivo `config.prod.js` y actualiza la variable `api` con la URL de tu backend en GCP.
 
-# Only add this if you want a custom domain.  Purchase it on AWS Route53 in your target AWS account first.
-domain=serverless-fullstack-app.com
-```
+   Ejemplo:
 
-In the root folder of the project, run `serverless deploy`
+   ```javascript
+   const config = {};
 
-Lastly, you will need to add your API domain manually to your React application in `./site/src/config.js`, so that you interact with your serverless Express.js back-end.  You can find the your API url by going into `./api` and running `serverless info` and copying the `url:` value.  It should look something like this `https://9jfalnal19.execute-api.us-east-1.amazonaws.com` or it will look like the custom domain you have set.
+   config.domains = {};
+   config.domains.api = "https://tu-api-en-gcp"; // Reemplaza con la URL de tu backend en GCP
 
-**Note:**  Upon the first deployment of your website, it will take a 2-3 minutes for the Cloudfront (CDN) URL to work.  Until then, you can access it via the `bucketUrl`.
+   export default config;
 
-After initial deployment, we recommend deploying only the parts you are changing, not the entire thing together (why risk deploying your database with a code change?).  To do this, `cd` into a part of the application and run `serverless deploy`.
+  ```
+3. **Guardar y Subir los Cambios:**
+   Guarda los cambios realizados en el archivo config.prod.js y súbelo a tu repositorio en GitHub para reflejar las actualizaciones en tu aplicación frontend.
+   Con estos pasos, tu aplicación frontend estará configurada correctamente para comunicarse con el servicio de backend desplegado en Google Cloud Platform.
 
-When working on the `./api` we highly recommend using `serverless dev`.  This command watches your code, auto-deploys it, and streams `console.log()` statements and errors directly to your CLI in real-time!
 
-If you want to add custom domains to your landing pages and API, either hardcode them in your `serverless.yml` or reference them as environment variables in `serverless.yml`, like this:
+### Instrucciones de Uso
 
-```yaml
-inputs:
-  domain: ${env:domain}
-```
+1. **Configuración de GCP:** Asegúrate de tener una cuenta en Google Cloud Platform y haber configurado adecuadamente tus credenciales y permisos.
+2. **Configuración de Secret Manager:** Define los secretos necesarios para tu aplicación, como claves de API o tokens de acceso, en Secret Manager de GCP.
+3. **Configuración de Cloud Build:** Habilita Cloud Build en tu proyecto de GCP y asegúrate de tener permisos para ejecutar construcciones.
+4. **Configuración de Storage:** Crea un bucket en Cloud Storage para almacenar las imágenes Docker generadas durante el proceso de construcción.
+5. **Configuración de Kubernetes:** Configura tu clúster de Kubernetes en GCP y asegúrate de tener acceso para aplicar los despliegues.
+6. **Configuración de Jenkins:** Configura un pipeline en Jenkins y referencia el Jenkinsfile proporcionado en este repositorio.
+7. **Ejecución del Pipeline:** Al realizar cambios en tu repositorio, Jenkins automáticamente iniciará el pipeline, construyendo las imágenes Docker, ejecutando pruebas y desplegando la aplicación en Kubernetes.
 
-```text
-domain=serverless-fullstack-app.com
-```
-
-Support for stages is built in. 
-
-You can deploy everything or individual components to different stages via the `--stage` flag, like this:
- 
-`serverless deploy --stage prod`
-
-Or, you can hardcode the stage in `serverless.yml` (not recommended):
-
-```yaml
-app: fullstack
-component: express@0.0.20
-name: fullstack-api
-stage: prod # Put the stage in here
-```
-
-Lastly, you can add separate environment variables for each stage using `.env` files with the stage name in them:
-
-```bash
-.env # Any stage
-.env.dev # "dev" stage only
-.env.prod # "prod" stage only
-```
-
-Then simply reference those environment variables using Serverless Variables in your YAML:
-
-```yaml
-app: fullstack
-component: express@0.0.20
-name: fullstack-api
-
-inputs:
-  domain: api.${env:domain}
-```
-
-And deploy!
-
-`serverless deploy --stage prod`
-
-Enjoy!  This is a work in progress and we will continue to add funcitonality to this.
-
-## Other Resources
-
-For more details on each part of this fullstack application, check out these resources:
-
-* [Serverless Components](https://github.com/serverless/components)
-* [Serverless Express](https://github.com/serverless-components/express)
-* [Serverless Website](https://github.com/serverless-components/website)
-* [Serverless AWS DynamoDB](https://github.com/serverless-components/aws-dynamodb)
-* [Serverless AWS IAM Role](https://github.com/serverless-components/aws-iam-role)
-
-## Guides
-
-### How To Debug CORS Errors
-
-If you are running into CORS errors, see our guide on debugging them [within the Express Component's repo](https://github.com/serverless-components/express/blob/master/README.md#how-to-debug-cors-errors)
+Con estas instrucciones, podrás configurar un pipeline de CI/CD efectivo utilizando las herramientas proporcionadas por Google Cloud Platform.

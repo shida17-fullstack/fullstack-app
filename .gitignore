@@ -1,27 +1,18 @@
-.DS_Store
-*.sublime-project
-*.sublime-workspace
-*.log
-.serverless
-v8-compile-cache-*
-jest/*
-coverage
-testProjects/*/package-lock.json
-testProjects/*/yarn.lock
-.serverlessUnzipped
-node_modules
-.vscode/
-.eslintcache
-dist
-.idea
-build/
-.env*
-.cache*
-.serverless
-.serverless_nextjs
-.serverless_plugins
-env.js
-tmp
-package-lock.json
-yarn.lock
-test
+# Ignorar node_modules para ambos frontend y backend
+**/node_modules/
+
+# Ignorar package-lock.json para ambos frontend y backend
+**/package-lock.json
+
+# Ignorar .env solo para el backend
+api/.env
+
+# Ignorar carpetas no utilizadas
+database/
+permissions/
+
+# Ignorar el archivo serverless.template.yml
+fullstack-app/serverless.template.yml
+
+# Ignorar la carpeta de cobertura (coverage) en el directorio api
+api/coverage/
