@@ -5,7 +5,7 @@
 **/package-lock.json
 
 # Ignorar .env solo para el backend
-api/.env
+/api/config/.env
 
 # Ignorar carpetas no utilizadas
 database/
