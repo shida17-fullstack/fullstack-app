@@ -45,23 +45,20 @@ Este archivo se encuentra en la ruta `site/src/config/config.prod.js` y contiene
    Después de que tu backend haya sido desplegado correctamente en Google Cloud Platform, recibirás la URL correspondiente.
 
 2. **Actualizar el Archivo `config.prod.js`:**
-   Abre el archivo `config.prod.js` y actualiza la variable `api` con la URL de tu backend en GCP.
+Abre el archivo `config.prod.js` y actualiza la variable `api` con la URL de tu backend en GCP.
 
-   Ejemplo:
+Ejemplo:
 
-   ```javascript
+```javascript
 
-   const config = {};
+const config = {};
 
-   config.domains = {};
-   config.domains.api = "https://tu-api-en-gcp"; // Reemplaza con la URL de tu backend en GCP
+config.domains = {};
+config.domains.api = "https://tu-api-en-gcp"; // Reemplaza con la URL de tu backend en GCP
 
-   export default config;
+export default config;
 
-
-  ```
-
-
+```
 3. **Guardar y Subir los Cambios:**
 Guarda los cambios realizados en el archivo config.prod.js y súbelo a tu repositorio en GitHub para reflejar las actualizaciones en tu aplicación frontend.
 Con estos pasos, tu aplicación frontend estará configurada correctamente para comunicarse con el servicio de backend desplegado en Google Cloud Platform.
