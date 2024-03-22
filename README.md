@@ -63,8 +63,8 @@ Este archivo se encuentra en la ruta `site/src/config/config.prod.js` y contiene
 
 
 3. **Guardar y Subir los Cambios:**
-   Guarda los cambios realizados en el archivo config.prod.js y súbelo a tu repositorio en GitHub para reflejar las actualizaciones en tu aplicación frontend.
-   Con estos pasos, tu aplicación frontend estará configurada correctamente para comunicarse con el servicio de backend desplegado en Google Cloud Platform.
+Guarda los cambios realizados en el archivo config.prod.js y súbelo a tu repositorio en GitHub para reflejar las actualizaciones en tu aplicación frontend.
+Con estos pasos, tu aplicación frontend estará configurada correctamente para comunicarse con el servicio de backend desplegado en Google Cloud Platform.
 
 
 ### Instrucciones de Uso
