@@ -50,7 +50,7 @@ Este archivo se encuentra en la ruta `site/src/config/config.prod.js` y contiene
    Ejemplo:
 
    ```javascript
-   
+
    const config = {};
 
    config.domains = {};
@@ -58,7 +58,9 @@ Este archivo se encuentra en la ruta `site/src/config/config.prod.js` y contiene
 
    export default config;
 
+
   ```
+
 
 3. **Guardar y Subir los Cambios:**
    Guarda los cambios realizados en el archivo config.prod.js y súbelo a tu repositorio en GitHub para reflejar las actualizaciones en tu aplicación frontend.
