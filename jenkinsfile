@@ -1,12 +1,19 @@
 pipeline {
     agent any
     
+    environment {
+        // Definir la variable BRANCH_NAME para Jenkins
+        BRANCH_NAME = "${env.BRANCH_NAME}"
+    }
+    
     stages {
         stage('Build Backend Image') {
             steps {
                 script {
                     // Construir la imagen Docker del backend
-                    sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-backend:latest ./api'
+                    withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
+                        sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-backend:latest ./api'
+                    }
                 }
             }
         }
@@ -15,26 +22,38 @@ pipeline {
             steps {
                 script {
                     // Construir la imagen Docker del frontend
-                    sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-frontend:latest ./site'
+                    withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
+                        sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-frontend:latest ./site'
+                    }
                 }
             }
         }
         
         stage('Unit Tests') {
             steps {
-                // Ejecutar pruebas unitarias con Jest y SuperTest
-                sh 'npm install --prefix ./api'
-                sh 'npm run test --prefix ./api'
+                script {
+                    // Ejecutar pruebas unitarias con Jest y SuperTest
+                    withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
+                        sh 'npm install --prefix ./api'
+                        sh 'npm run test --prefix ./api'
+                    }
+                }
             }
         }
         
         stage('Deploy to Kubernetes') {
             steps {
-                // Aplicar despliegamiento del backend
-                sh 'kubectl apply -f ./api/deployment-backend.yaml'
-                
-                // Aplicar despliegamiento del frontend
-                sh 'kubectl apply -f ./site/deployment-frontend.yaml'
+                script {
+                    // Aplicar despliegamiento del backend
+                    withCredentials([file(credentialsId: 'Credencial_GPC', variable: 'GCP_CREDENTIAL')]) {
+                        sh 'kubectl apply -f ./api/deployment-backend.yaml'
+                    }
+                    
+                    // Aplicar despliegamiento del frontend
+                    withCredentials([file(credentialsId: 'Credencial_GPC', variable: 'GCP_CREDENTIAL')]) {
+                        sh 'kubectl apply -f ./site/deployment-frontend.yaml'
+                    }
+                }
             }
         }
     }
