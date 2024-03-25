@@ -2,8 +2,8 @@ pipeline {
     agent any
     
     environment {
-        // Definir la variable BRANCH_NAME para Jenkins
-        BRANCH_NAME = "${env.BRANCH_NAME}"
+        // Obtener la rama real del repositorio de GitHub
+        BRANCH_NAME = "${env.GIT_BRANCH}"
     }
     
     stages {
