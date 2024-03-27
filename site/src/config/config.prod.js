@@ -1,6 +1,6 @@
 const config = {};
 
 config.domains = {};
-config.domains.api = "https://tu-api-en-gcp";
+config.domains.api = "http://10.60.3.168:80";
 
 export default config;
