@@ -1,4 +1,4 @@
-steps:
+ssteps:
   # Paso para construir la imagen Docker del backend
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/jenkinsgpc/my-backend', './api']
@@ -14,4 +14,6 @@ artifacts:
     paths:
       - 'my-backend/**'  # Ruta de la imagen Docker del backend
       - 'my-frontend/**' # Ruta de la imagen Docker del frontend
-  logsBucket: 'proyecto-jenkins-gcp'  # Especifica el nombre del bucket para los registros de la compilación
+
+# Especifica el nombre del bucket para los registros de la compilación
+logsBucket: 'gs://proyecto-jenkins-gcp'
