@@ -1,4 +1,4 @@
-ssteps:
+steps:
   # Paso para construir la imagen Docker del backend
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/jenkinsgpc/my-backend', './api']
