@@ -7,11 +7,11 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/jenkinsgpc/my-frontend', './site']
 
-
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes
 artifacts:
   objects:
-    location: 'gs://proyecto-jenkins-gcp/'
+    location: 'gs://proyecto-jenkins-gcp/'  # Ubicación para almacenar las imágenes Docker
     paths:
       - 'my-backend/**'  # Ruta de la imagen Docker del backend
       - 'my-frontend/**' # Ruta de la imagen Docker del frontend
+  logsBucket: 'proyecto-jenkins-gcp'  # Especifica el nombre del bucket para los registros de la compilación
