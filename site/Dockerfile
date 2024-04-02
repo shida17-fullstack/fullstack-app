@@ -13,6 +13,11 @@ RUN npm install
 # Copiar todos los archivos del proyecto al directorio de trabajo del contenedor
 COPY . .
 
+# Establecer las variables de entorno
+ENV PORT=3002
+ENV NODE_OPTIONS="--openssl-legacy-provider"
+ENV NODE_ENV=production
+
 # Construir la aplicación React
 RUN npm run build
 
