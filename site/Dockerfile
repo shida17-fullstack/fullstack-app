@@ -23,7 +23,7 @@ FROM nginx:alpine
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Copiar la configuración específica del entorno (config.prod.js) al directorio de Nginx
-COPY config/config.prod.js /usr/share/nginx/html/config.js
+COPY src/config/config.prod.js /usr/share/nginx/html/config.js
 
 # Exponer el puerto 80 (el puerto predeterminado de Nginx)
 EXPOSE 80
