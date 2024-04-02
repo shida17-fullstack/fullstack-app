@@ -15,7 +15,8 @@ COPY . .
 EXPOSE 3000
 
 # Copia el archivo .env al contenedor desde la ubicación especificada
-COPY ./api/config/.env ./
+COPY config/.env ./
+
 
 # Comando para ejecutar la aplicación
 CMD ["node", "server.js"]
