@@ -12,8 +12,8 @@ artifacts:
   objects:
     location: 'gs://proyecto-jenkins-gcp/'  # Ubicación para almacenar las imágenes Docker
     paths:
-      - 'my-backend/**'  # Ruta de la imagen Docker del backend
-      - 'my-frontend/**' # Ruta de la imagen Docker del frontend
+      - 'my-backend/'  # Ruta de la imagen Docker del backend
+      - 'my-frontend/' # Ruta de la imagen Docker del frontend
 
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
