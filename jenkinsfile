@@ -10,6 +10,8 @@ pipeline {
         stage('Build Backend Image') {
             steps {
                 script {
+                    echo 'Construyendo la imagen Docker del backend...'
+
                     // Construir la imagen Docker del backend
                     withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
                         sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-backend ./api'
@@ -22,6 +24,7 @@ pipeline {
         stage('Build Frontend Image') {
             steps {
                 script {
+                    echo 'Construyendo la imagen Docker del frontend...'
                     // Construir la imagen Docker del frontend
                     withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
                         sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-frontend ./site'
