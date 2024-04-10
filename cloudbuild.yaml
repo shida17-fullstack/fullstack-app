@@ -3,9 +3,17 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/jenkinsgpc/jenkinsgpc-backend', './api']
   
+  # Paso para empujar la imagen Docker del backend a GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend']
+
   # Paso para construir la imagen Docker del frontend
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend', './site']
+
+  # Paso para empujar la imagen Docker del frontend a GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes
 artifacts:
