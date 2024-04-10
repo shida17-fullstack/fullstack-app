@@ -7,27 +7,26 @@ pipeline {
     }
     
     stages {
-        stage('Build Backend Image') {
+       stage('Build Backend Image') {
             steps {
                 script {
                     echo 'Construyendo la imagen Docker del backend...'
 
                     // Construir la imagen Docker del backend
                     withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
-                        sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-backend ./api'
-
+                        sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/jenkinsgpc-backend ./api'
                     }
                 }
             }
         }
-        
+
         stage('Build Frontend Image') {
             steps {
                 script {
                     echo 'Construyendo la imagen Docker del frontend...'
                     // Construir la imagen Docker del frontend
                     withCredentials([string(credentialsId: 'GitHubToken', variable: 'GITHUB_TOKEN')]) {
-                        sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/my-frontend ./site'
+                        sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/jenkinsgpc-frontend ./site'
                     }
                 }
             }
@@ -36,8 +35,8 @@ pipeline {
             steps {
                 script {
                     // Descargar las imágenes Docker desde Cloud Storage
-                    sh 'gsutil cp gs://proyecto-jenkins-gcp/my-backend ./api/my-backend.tar.gz'
-                    sh 'gsutil cp gs://proyecto-jenkins-gcp/my-frontend ./site/my-frontend.tar.gz'
+                    sh 'gsutil cp gs://proyecto-jenkinsgpc/jenkinsgpc-backend ./api/backend.tar.gz'
+                    sh 'gsutil cp gs://proyecto-jenkinsgpc/jenkinsgpc-frontend ./site/frontend.tar.gz'
 
                 }
             }
@@ -58,16 +57,16 @@ pipeline {
             steps {
                 script {
                     // Descargar las imágenes desde Cloud Storage
-                    sh 'gsutil cp gs://proyecto-jenkinsgcp/my-backend ./api/my-backend.tar.gz'
-                    sh 'gsutil cp gs://proyecto-jenkinsgcp/my-frontend ./site/my-frontend.tar.gz'
+                    sh 'gsutil cp gs://proyecto-jenkinsgpc/jenkinsgpc-backend ./api/backend.tar.gz'
+                    sh 'gsutil cp gs://proyecto-jenkinsgpc/jenkinsgpc-frontend ./site/frontend.tar.gz'
 
                     // Cargar las imágenes Docker desde los archivos tar.gz
-                    sh 'docker load -i ./api/my-backend.tar.gz'
-                    sh 'docker load -i ./site/my-frontend.tar.gz'
+                    sh 'docker load -i ./api/backend.tar.gz'
+                    sh 'docker load -i ./site/frontend.tar.gz'
 
                     // Etiquetar las imágenes Docker con la versión correcta
-                    sh 'docker tag gcr.io/jenkinsgpc/my-backend gcr.io/jenkinsgpc/my-backend:v1'
-                    sh 'docker tag gcr.io/jenkinsgpc/my-frontend gcr.io/jenkinsgpc/my-frontend:v1'
+                    sh 'docker tag gcr.io/jenkinsgpc/jenkinsgpc-backend gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
+                    sh 'docker tag gcr.io/jenkinsgpc/jenkinsgpc-frontend gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
 
 
                     // Aplicar despliegamiento del backend
@@ -82,3 +81,5 @@ pipeline {
                 }
             }
         }
+    }
+}

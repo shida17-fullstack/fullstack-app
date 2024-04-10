@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: gcr.io/jenkinsgpc/my-backend:v1
+        image: gcr.io/jenkinsgpc/jenkinsgpc-backend:v1
         ports:
         - containerPort: 3000
 ---
