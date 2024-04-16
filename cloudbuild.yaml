@@ -1,19 +1,29 @@
 steps:
   # Paso para construir la imagen Docker del backend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/jenkinsgpc/jenkinsgpc-backend', './api']
+    args: ['build', '-t', 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1', './api']
   
   # Paso para empujar la imagen Docker del backend a GCR
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend']
+    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1']
 
   # Paso para construir la imagen Docker del frontend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend', './site']
+    args: ['build', '-t', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1', './site']
 
   # Paso para empujar la imagen Docker del frontend a GCR
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
+    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1']
+
+# Paso para desplegar la aplicación en Kubernetes utilizando gke-deploy
+- name: 'gcr.io/cloud-builders/gke-deploy'
+  args:
+    - '-c'
+    - 'gcr.io/jenkinsgpc/jenkinsgpc-backend=gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
+    - '-c'
+    - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend=gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
+    - '-f'
+    - './api/deployment-backend.yaml,./site/deployment-frontend.yaml'
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes
 artifacts:
