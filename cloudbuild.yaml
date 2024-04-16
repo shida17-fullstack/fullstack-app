@@ -18,12 +18,10 @@ steps:
 # Paso para desplegar la aplicación en Kubernetes utilizando gke-deploy
 - name: 'gcr.io/cloud-builders/gke-deploy'
   args:
-    - '-c'
-    - 'gcr.io/jenkinsgpc/jenkinsgpc-backend=gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
-    - '-c'
-    - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend=gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
-    - '-f'
-    - './api/deployment-backend.yaml,./site/deployment-frontend.yaml'
+    - run
+    - '--filename=./api/deployment-backend.yaml,./site/deployment-frontend.yaml'
+    - '--location=us-central1-c'
+    - '--cluster=jenkins-cicd-cluster'
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes
 artifacts:
