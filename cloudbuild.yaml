@@ -19,9 +19,9 @@ steps:
 - name: 'gcr.io/cloud-builders/gke-deploy'
   args:
     - run
-    - '--filename=./api/deployment-backend.yaml,./site/deployment-frontend.yaml'
-    - '--location=us-central1-c'
-    - '--cluster=jenkins-cicd-cluster'
+    - --filename=./api/deployment-backend.yaml,./site/deployment-frontend.yaml
+    - --location=us-central1-c
+    - --cluster=jenkins-cicd-cluster
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes
 artifacts:
