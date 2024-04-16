@@ -30,15 +30,6 @@ pipeline {
             }
         }
         
-        stage('Deploy to Kubernetes') {
-            steps {
-                script {
-                    // Aplicar despliegamiento del backend
-                    sh 'kubectl apply -f ./api/deployment-backend.yaml'
-                    // Aplicar despliegamiento del frontend
-                    sh 'kubectl apply -f ./site/deployment-frontend.yaml'
-                }
-            }
-        }
+        
     }
 }
