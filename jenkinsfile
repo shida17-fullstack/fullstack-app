@@ -30,6 +30,18 @@ pipeline {
             }
         }
         
-        
+        stage('Cloud Build') {
+            steps {
+                // Utiliza el plugin de Cloud Build para iniciar la compilación
+                script {
+                    // Ejemplo de uso del plugin de Cloud Build
+                    cloudBuild projectId: 'jenkinsgpc', 
+                               recipe: 'cloudbuild.yaml', 
+                               source: '.', 
+                               substitutions: "BRANCH_NAME=${BRANCH_NAME}"
+                }
+            }
+        }
     }
 }
+
