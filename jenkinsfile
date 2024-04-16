@@ -7,18 +7,6 @@ pipeline {
     }
     
     stages {
-        stage('Build Docker Images') {
-            steps {
-                script {
-                    echo 'Construyendo las imágenes Docker...'
-                    // Construir la imagen Docker del backend
-                    sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/jenkinsgpc-backend ./api'
-                    // Construir la imagen Docker del frontend
-                    sh 'gcloud builds submit --tag gcr.io/jenkinsgpc/jenkinsgpc-frontend ./site'
-                }
-            }
-        }
-
         stage('Unit Tests') {
             steps {
                 script {
@@ -44,4 +32,3 @@ pipeline {
         }
     }
 }
-
