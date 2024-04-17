@@ -27,9 +27,9 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Redirigir la salida de los archivos sugeridos a /dev/null para descartarlos
-    - >-
-      /dev/null
+      # Redirigir la salida de los archivos sugeridos a /dev/null para descartarlos
+      - '>'
+      - '/dev/null'
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -38,9 +38,9 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Redirigir la salida de los archivos sugeridos a /dev/null para descartarlos
-    - >-
-      /dev/null
+      # Redirigir la salida de los archivos sugeridos a /dev/null para descartarlos
+      - '>'
+      - '/dev/null'
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
@@ -52,4 +52,3 @@ artifacts:
 
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
-
