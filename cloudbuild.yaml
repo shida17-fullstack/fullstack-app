@@ -6,8 +6,12 @@ steps:
       - '-t'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'
       - './api'
+    dir: './api'  # Establecer el directorio de trabajo para este paso
+
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend']
+    args: 
+      - 'push'
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'
 
   # Paso para construir y empujar la imagen Docker del frontend a GCR
   - name: 'gcr.io/cloud-builders/docker'
@@ -16,8 +20,12 @@ steps:
       - '-t'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend'
       - './site'
+    dir: './site'  # Establecer el directorio de trabajo para este paso
+
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
+    args:
+      - 'push'
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend'
 
   # Elimina el contenido del directorio output/suggested si existe
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -30,15 +38,6 @@ steps:
           rm -rf output/suggested/*
         fi
 
-  # Crear un directorio personalizado para los archivos de despliegue
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        echo "Creando directorio de salida personalizado..."
-        mkdir -p custom_output_directory
-
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -47,7 +46,6 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-      - --output-dir=custom_output_directory  # Especificar el directorio de salida personalizado
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -56,7 +54,6 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-      - --output-dir=custom_output_directory  # Especificar el directorio de salida personalizado
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
