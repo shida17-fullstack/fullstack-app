@@ -1,6 +1,7 @@
 const config = {};
 
 config.domains = {};
-config.domains.api = "http://10.60.3.168:80";
+config.domains.api = "http://35.225.239.47";
 
 export default config;
+
