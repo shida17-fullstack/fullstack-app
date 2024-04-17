@@ -19,14 +19,14 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
-  # Elimina el contenido del directorio output/suggested solo si existe para el frontend usando BusyBox
-  - name: 'busybox'
+  # Elimina el contenido del directorio output/suggested si existe
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
     args:
-      - 'sh'
       - '-c'
       - |
         if [ -d "output/suggested" ]; then
-          echo "Eliminando el contenido existente del directorio output/suggested para el frontend..."
+          echo "Eliminando el contenido existente del directorio output/suggested..."
           rm -rf output/suggested/*
         fi
 
@@ -38,6 +38,7 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
+      - --save-config=false  # Deshabilita la generación de archivos de configuración sugeridos
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -46,6 +47,7 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
+      - --save-config=false  # Deshabilita la generación de archivos de configuración sugeridos
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
