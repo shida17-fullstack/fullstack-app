@@ -19,6 +19,15 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
+  # Crear un directorio temporal para los archivos de salida sugeridos
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Creando directorio temporal para los archivos sugeridos..."
+        mkdir -p temp_output_directory
+
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -27,9 +36,9 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-      # Redirigir la salida de los archivos sugeridos a /dev/null para descartarlos
-      - '>'
-      - '/dev/null'
+    # Redirigir la salida de los archivos sugeridos a un directorio temporal
+    - '>'
+    - 'temp_output_directory/output.log'
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -38,9 +47,18 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-      # Redirigir la salida de los archivos sugeridos a /dev/null para descartarlos
-      - '>'
-      - '/dev/null'
+    # Redirigir la salida de los archivos sugeridos a un directorio temporal
+    - '>'
+    - 'temp_output_directory/output.log'
+
+# Eliminar el directorio temporal después de utilizar los archivos sugeridos
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Eliminando el directorio temporal de archivos sugeridos..."
+        rm -rf temp_output_directory
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
@@ -52,3 +70,4 @@ artifacts:
 
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
+
