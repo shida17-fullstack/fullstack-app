@@ -41,9 +41,8 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Capturar la salida y enviarla a un archivo
-    - '>>'
-    - 'temp_output_directory/output.log'
+      - -o
+      - temp_output_directory  # Especificar el directorio de salida personalizado
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -52,9 +51,8 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Capturar la salida y enviarla a un archivo
-    - '>>'
-    - 'temp_output_directory/output.log'
+      - -o
+      - temp_output_directory  # Especificar el directorio de salida personalizado
 
 # Eliminar el directorio temporal después de utilizar los archivos sugeridos
   - name: 'gcr.io/cloud-builders/gcloud'
