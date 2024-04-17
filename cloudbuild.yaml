@@ -6,7 +6,6 @@ steps:
       - '-t'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'
       - './api'
-
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend']
 
@@ -17,25 +16,21 @@ steps:
       - '-t'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend'
       - './site'
-
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
-  # Verifica si el directorio output/suggested existe antes de continuar
+  # Elimina el contenido del directorio output/suggested si existe
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         if [ -d "output/suggested" ]; then
-          echo "El directorio output/suggested ya existe, eliminando contenido existente..."
+          echo "Eliminando el contenido existente del directorio output/suggested..."
           rm -rf output/suggested/*
-        else
-          echo "El directorio output/suggested no existe, creándolo..."
-          mkdir -p output/suggested
         fi
 
-  # Paso para desplegar la aplicación en Kubernetes utilizando gke-deploy
+  # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - run
@@ -52,10 +47,10 @@ steps:
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
 
-# Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes
+# Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
   objects:
-    location: 'gs://proyecto-jenkins-gcp/'  # Ubicación para almacenar las imágenes Docker
+    location: 'gs://proyecto-jenkins-gcp/'  # Ubicación para almacenar las imágenes Docker y los artefactos
     paths:
       - 'api/*'  # Ruta para los artefactos del backend
       - 'site/*'  # Ruta para los artefactos del frontend
