@@ -21,6 +21,20 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
+  # Verifica si el directorio output/suggested existe antes de continuar
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        if [ -d "output/suggested" ]; then
+          echo "El directorio output/suggested ya existe, eliminando contenido existente..."
+          rm -rf output/suggested/*
+        else
+          echo "El directorio output/suggested no existe, creándolo..."
+          mkdir -p output/suggested
+        fi
+
   # Paso para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
