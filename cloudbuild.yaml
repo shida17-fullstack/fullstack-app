@@ -19,14 +19,19 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
-  # Crear un directorio temporal para los archivos de salida sugeridos
+  # Verificar si el directorio output/suggested existe y está vacío
   - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Creando directorio temporal para los archivos sugeridos..."
-        mkdir -p temp_output_directory
+        echo "Verificando el directorio output/suggested..."
+        if [ -d "output/suggested" ] && [ -z "$(ls -A output/suggested)" ]; then
+          echo "El directorio output/suggested está vacío."
+        else
+          echo "El directorio output/suggested no está vacío. Limpiando..."
+          rm -rf output/suggested/*
+        fi
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -36,8 +41,9 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-      - '>'
-      - 'temp_output_directory/output.log'  # Redirigir la salida de los archivos sugeridos a un directorio temporal
+    # Redirigir la salida de los archivos sugeridos a un directorio temporal
+    - '>'
+    - 'temp_output_directory/output.log'
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -46,8 +52,9 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-      - '>'
-      - 'temp_output_directory/output.log'  # Redirigir la salida de los archivos sugeridos a un directorio temporal
+    # Redirigir la salida de los archivos sugeridos a un directorio temporal
+    - '>'
+    - 'temp_output_directory/output.log'
 
 # Eliminar el directorio temporal después de utilizar los archivos sugeridos
   - name: 'gcr.io/cloud-builders/gcloud'
