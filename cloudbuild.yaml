@@ -19,14 +19,14 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
-  # Elimina el contenido del directorio output/suggested si existe
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
+  # Elimina el contenido del directorio output/suggested solo si existe para el frontend usando BusyBox
+  - name: 'busybox'
     args:
+      - 'sh'
       - '-c'
       - |
         if [ -d "output/suggested" ]; then
-          echo "Eliminando el contenido existente del directorio output/suggested..."
+          echo "Eliminando el contenido existente del directorio output/suggested para el frontend..."
           rm -rf output/suggested/*
         fi
 
