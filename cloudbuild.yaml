@@ -36,9 +36,8 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Redirigir la salida de los archivos sugeridos a un directorio temporal
-    - '>'
-    - 'temp_output_directory/output.log'
+      - '>'
+      - 'temp_output_directory/output.log'  # Redirigir la salida de los archivos sugeridos a un directorio temporal
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -47,9 +46,8 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Redirigir la salida de los archivos sugeridos a un directorio temporal
-    - '>'
-    - 'temp_output_directory/output.log'
+      - '>'
+      - 'temp_output_directory/output.log'  # Redirigir la salida de los archivos sugeridos a un directorio temporal
 
 # Eliminar el directorio temporal después de utilizar los archivos sugeridos
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -70,4 +68,3 @@ artifacts:
 
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
-
