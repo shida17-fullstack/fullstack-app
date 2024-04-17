@@ -41,8 +41,8 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Redirigir la salida de los archivos sugeridos a un directorio temporal
-    - '>'
+    # Capturar la salida y enviarla a un archivo
+    - '>>'
     - 'temp_output_directory/output.log'
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -52,8 +52,8 @@ steps:
       - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
       - --location=us-central1-c
       - --cluster=jenkins-cicd-cluster
-    # Redirigir la salida de los archivos sugeridos a un directorio temporal
-    - '>'
+    # Capturar la salida y enviarla a un archivo
+    - '>>'
     - 'temp_output_directory/output.log'
 
 # Eliminar el directorio temporal después de utilizar los archivos sugeridos
