@@ -4,8 +4,6 @@ pipeline {
     environment {
         // Obtener la rama real del repositorio de GitHub
         BRANCH_NAME = "${env.GIT_BRANCH}"
-        // Especificar la variable de entorno para las credenciales de GCP
-        GOOGLE_APPLICATION_CREDENTIALS = credentials('jenkinsgpc-service-account')
     }
     
     stages {
@@ -24,13 +22,13 @@ pipeline {
             steps {
                 // Utiliza el plugin de Cloud Build para iniciar la compilación
                 script {
-                    // uso del plugin de Cloud Build
-                    googleCloudBuild credentialsId: 'jenkinsgpc-service-account',
-                                    request: file('cloudbuild.yaml'),
-                                    source: local('.'),
-                                    substitutions: [
-                                        BRANCH_NAME: "${BRANCH_NAME}"
-                                    ]
+                    // Ejemplo de uso del plugin de Cloud Build
+                    googleCloudBuild(
+                        credentialsId: 'jenkinsgpc-service-account',
+                        request: file('cloudbuild.yaml'),
+                        source: local('.'),
+                        substitutions: "BRANCH_NAME=${BRANCH_NAME}"
+                    )
                 }
             }
         }
