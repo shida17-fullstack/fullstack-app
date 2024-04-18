@@ -25,7 +25,7 @@ pipeline {
                 // Utiliza el plugin de Cloud Build para iniciar la compilación
                 script {
                     // Ejemplo de uso del plugin de Cloud Build
-                    cloudBuild credentialsId: env.GOOGLE_APPLICATION_CREDENTIALS,
+                    cloudBuild credentialsId: 'jenkinsgpc-service-account',
                                projectId: 'jenkinsgpc', 
                                recipe: 'cloudbuild.yaml', 
                                source: '.', 
