@@ -24,12 +24,13 @@ pipeline {
             steps {
                 // Utiliza el plugin de Cloud Build para iniciar la compilación
                 script {
-                    // Ejemplo de uso del plugin de Cloud Build
-                    cloudBuild credentialsId: 'jenkinsgpc-service-account',
-                               projectId: 'jenkinsgpc', 
-                               recipe: 'cloudbuild.yaml', 
-                               source: '.', 
-                               substitutions: "BRANCH_NAME=${BRANCH_NAME}"
+                    // uso del plugin de Cloud Build
+                    googleCloudBuild credentialsId: 'jenkinsgpc-service-account',
+                                    request: file('cloudbuild.yaml'),
+                                    source: local('.'),
+                                    substitutions: [
+                                        BRANCH_NAME: "${BRANCH_NAME}"
+                                    ]
                 }
             }
         }
