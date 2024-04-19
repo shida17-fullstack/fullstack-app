@@ -19,7 +19,6 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
-  steps:
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
