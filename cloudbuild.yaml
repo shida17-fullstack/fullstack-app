@@ -19,22 +19,33 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
+  steps:
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
-      - run
-      - --filename=./api/deployment-backend.yaml
-      - --image=gcr.io/jenkinsgpc/jenkinsgpc-backend
-      - --location=us-central1-c
-      - --cluster=jenkins-cicd-cluster
+      - 'run'
+      - '--filename=./api/deployment-backend.yaml'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend'
+      - '--location=us-central1-c'
+      - '--cluster=jenkins-cicd-cluster'
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
-      - run
-      - --filename=./site/deployment-frontend.yaml
-      - --image=gcr.io/jenkinsgpc/jenkinsgpc-frontend
-      - --location=us-central1-c
-      - --cluster=jenkins-cicd-cluster
+      - 'run'
+      - '--filename=./site/deployment-frontend.yaml'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend'
+      - '--location=us-central1-c'
+      - '--cluster=jenkins-cicd-cluster'
+
+  # Eliminar los recursos del frontend
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'delete'
+      - '-f'
+      - './site/deployment-frontend.yaml'
+      - '--ignore-not-found=true'
+      - '-o'
+      - 'json'  # Especifica el formato de salida como JSON
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
