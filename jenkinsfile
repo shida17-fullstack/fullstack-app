@@ -14,8 +14,15 @@ pipeline {
                     // Ejecutar pruebas unitarias con Jest y SuperTest
                     sh 'npm install --prefix ./api'
                     sh 'npm run test --prefix ./api'
-                    // Puedes agregar más pasos de prueba según sea necesario
+                    
                 }
+            }
+        }
+        
+        stage('Verify gcloud') {
+            steps {
+                // Verificar si gcloud está instalado
+                sh 'gcloud version'
             }
         }
         
@@ -23,16 +30,7 @@ pipeline {
             steps {
                 // Utiliza withCredentials para obtener la credencial de GCP
                 withCredentials([string(credentialsId: 'jenkinsgpc-service-account', variable: 'GCP_CREDENTIALS')]) {
-                    // Ejemplo de uso del plugin de Cloud Build con credenciales
-                    script {
-                        googleCloudBuild(
-                            credentialsId: 'jenkinsgpc-service-account',
-                            request: file('cloudbuild.yaml'),
-                            source: local('.'),
-                            substitutions: "BRANCH_NAME=${BRANCH_NAME}",
-                            credentials: 'GCP_CREDENTIALS' // Pasar las credenciales como parámetro
-                        )
-                    }
+                    
                 }
             }
         }
