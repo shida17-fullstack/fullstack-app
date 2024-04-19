@@ -4,7 +4,7 @@ pipeline {
     environment {
         // Obtener la rama real del repositorio de GitHub
         BRANCH_NAME = "${env.GIT_BRANCH}"
-        GCP_SERVICE_ACCOUNT = '606820346362-compute@developer.gserviceaccount.com' // Definir la cuenta de servicio de GCP
+        GCP_SERVICE_ACCOUNT = '606820346362@cloudbuild.gserviceaccount.com' // Definir la cuenta de servicio de Cloud Build
     }
     
     stages {
@@ -27,8 +27,6 @@ pipeline {
                         gcloud version
                         gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS}
                     """
-                    
-                    
                 }
             }
         }
