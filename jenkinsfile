@@ -21,7 +21,7 @@ pipeline {
         stage('Cloud Build') {
             steps {
                 // Conéctate primero
-                withCredentials([string(credentialsId: 'jenkinsgpc-service-account', variable: 'GCP_CREDENTIALS')]) {
+                withCredentials([file(credentialsId: 'jenkinsgpc-service-account', variable: 'GCP_CREDENTIALS')]) {
                     // Ejecutar comandos de gcloud
                     sh """
                         gcloud version
