@@ -14,22 +14,20 @@ pipeline {
                     // Ejecutar pruebas unitarias con Jest y SuperTest
                     sh 'npm install --prefix ./api'
                     sh 'npm run test --prefix ./api'
-                    
                 }
-            }
-        }
-        
-        stage('Verify gcloud') {
-            steps {
-                // Verificar si gcloud está instalado
-                sh 'gcloud version'
             }
         }
         
         stage('Cloud Build') {
             steps {
-                // Utiliza withCredentials para obtener la credencial de GCP
+                // Conéctate primero
                 withCredentials([string(credentialsId: 'jenkinsgpc-service-account', variable: 'GCP_CREDENTIALS')]) {
+                    // Ejecutar comandos de gcloud
+                    sh """
+                        gcloud version
+                        gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS}
+                    """
+                    
                     
                 }
             }
