@@ -36,16 +36,6 @@ steps:
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
-  # Eliminar los recursos del frontend
-  - name: 'gcr.io/cloud-builders/kubectl'
-    args:
-      - 'delete'
-      - '-f'
-      - './site/deployment-frontend.yaml'
-      - '--ignore-not-found=true'
-      - '-o'
-      - 'json'  # Especifica el formato de salida como JSON
-
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
   objects:
