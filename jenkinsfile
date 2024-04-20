@@ -19,20 +19,22 @@ pipeline {
             }
         }
         
-        stage('Cloud Build') {
-            steps {
-                // Ejecutar el comando de Cloud Build desde la línea de comandos de Jenkins
-                script {
-                    def output = sh(script: """
-                        gcloud builds submit \
-                        --config=cloudbuild.yaml \
-                        --project=${GCP_PROJECT_ID} \
-                        --account=${CLOUD_BUILD_SERVICE_ACCOUNT} \
-                        .
-                    """, returnStdout: true)
-                    println(output)
-                }
+       stage('Cloud Build') {
+    steps {
+        script {
+            echo 'Iniciando Cloud Build...'
+            def output = sh(script: """
+                gcloud builds submit \
+                --config=cloudbuild.yaml \
+                --project=${GCP_PROJECT_ID} \
+                --account=${CLOUD_BUILD_SERVICE_ACCOUNT} \
+                .
+            """, returnStdout: true).trim()
+            println(output)
+            if (output.contains('ERROR')) {
+                error 'Error durante la compilación de Cloud Build'
             }
+            echo 'Cloud Build finalizado.'
         }
     }
 }
