@@ -23,13 +23,14 @@ pipeline {
             steps {
                 // Ejecutar el comando de Cloud Build desde la línea de comandos de Jenkins
                 script {
-                    sh """
+                    def output = sh(script: """
                         gcloud builds submit \
                         --config=cloudbuild.yaml \
                         --project=${GCP_PROJECT_ID} \
                         --account=${CLOUD_BUILD_SERVICE_ACCOUNT} \
                         .
-                    """
+                    """, returnStdout: true)
+                    println(output)
                 }
             }
         }
