@@ -5,6 +5,7 @@ pipeline {
         // Obtener la rama real del repositorio de GitHub
         BRANCH_NAME = "${env.GIT_BRANCH}"
         GCP_SERVICE_ACCOUNT = '606820346362@cloudbuild.gserviceaccount.com' // Definir la cuenta de servicio de Cloud Build
+        GCP_PROJECT_ID = 'jenkinsgpc' // ID del proyecto en GCP
     }
     
     stages {
@@ -25,7 +26,7 @@ pipeline {
                     // Ejecutar comandos de gcloud
                     sh """
                         gcloud version
-                        gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS}
+                        gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS} --project=${GCP_PROJECT_ID}
                     """
                 }
             }
