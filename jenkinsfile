@@ -4,8 +4,8 @@ pipeline {
     environment {
         // Obtener la rama real del repositorio de GitHub
         BRANCH_NAME = "${env.GIT_BRANCH}"
-        GCP_SERVICE_ACCOUNT = '606820346362@cloudbuild.gserviceaccount.com' // Definir la cuenta de servicio de Cloud Build
         GCP_PROJECT_ID = 'jenkinsgpc' // ID del proyecto en GCP
+        CLOUD_BUILD_SERVICE_ACCOUNT = '606820346362@cloudbuild.gserviceaccount.com' // Cuenta de servicio de Cloud Build
     }
     
     stages {
@@ -21,12 +21,14 @@ pipeline {
         
         stage('Cloud Build') {
             steps {
-                // Conéctate primero
-                withCredentials([file(credentialsId: 'jenkinsgpc-service-account', variable: 'GCP_CREDENTIALS')]) {
-                    // Ejecutar comandos de gcloud
+                // Ejecutar el comando de Cloud Build desde la línea de comandos de Jenkins
+                script {
                     sh """
-                        gcloud version
-                        gcloud auth activate-service-account --key-file=${GCP_CREDENTIALS} --project=${GCP_PROJECT_ID}
+                        gcloud builds submit \
+                        --config=cloudbuild.yaml \
+                        --project=${GCP_PROJECT_ID} \
+                        --account=${CLOUD_BUILD_SERVICE_ACCOUNT} \
+                        .
                     """
                 }
             }
