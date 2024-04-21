@@ -5,7 +5,7 @@ pipeline {
         // Obtener la rama real del repositorio de GitHub
         BRANCH_NAME = "${env.GIT_BRANCH}"
         GCP_PROJECT_ID = 'jenkinsgpc' // ID del proyecto en GCP
-        CLOUD_BUILD_SERVICE_ACCOUNT = '606820346362@cloudbuild.gserviceaccount.com' // Cuenta de servicio de Cloud Build
+        CLOUD_SERVICE_ACCOUNT = '606820346362-compute@developer.gserviceaccount.com' // Cuenta de servicio de Cloud Build
     }
     
     stages {
@@ -28,7 +28,7 @@ pipeline {
                         gcloud builds submit \
                         --config=cloudbuild.yaml \
                         --project=${GCP_PROJECT_ID} \
-                        --account=${CLOUD_BUILD_SERVICE_ACCOUNT} \
+                        --account=${CLOUD_SERVICE_ACCOUNT} \
                         . > cloud_build_output.txt
                     """
                     
