@@ -23,16 +23,17 @@ pipeline {
             steps {
                 script {
                     echo 'Iniciando Cloud Build...'
-                    // Capturar la salida de la compilación en una variable
-                    def output = sh(script: """
+                    // Ejecutar el comando de Cloud Build y almacenar la salida en un archivo temporal
+                    sh """
                         gcloud builds submit \
                         --config=cloudbuild.yaml \
                         --project=${GCP_PROJECT_ID} \
                         --account=${CLOUD_BUILD_SERVICE_ACCOUNT} \
-                        .
-                    """, returnStdout: true).trim()
+                        . > cloud_build_output.txt
+                    """
                     
-                    // Imprimir la salida de la compilación por la salida de consola
+                    // Leer la salida de la compilación desde el archivo temporal y mostrarla en la salida de consola
+                    def output = readFile('cloud_build_output.txt').trim()
                     println(output)
                     
                     // Verificar si hubo errores en la compilación
