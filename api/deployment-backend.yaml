@@ -17,6 +17,10 @@ spec:
         image: gcr.io/jenkinsgpc/jenkinsgpc-backend:v1
         ports:
         - containerPort: 3000
+        resources:
+          requests:
+            memory: "128Mi"  # Solicitar 128 megabytes de memoria
+            cpu: "100m"      # Solicitar 100 milicore de CPU
 ---
 apiVersion: v1
 kind: Service
