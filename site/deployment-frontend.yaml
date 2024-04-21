@@ -17,10 +17,6 @@ spec:
         image: gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1
         ports:
         - containerPort: 80
-        resources:
-          requests:
-            memory: "64Mi"   # Solicitar 64 megabytes de memoria
-            cpu: "50m"       # Solicitar 50 milicore de CPU
 ---
 apiVersion: v1
 kind: Service
@@ -34,3 +30,4 @@ spec:
       port: 80
       targetPort: 80
   type: LoadBalancer
+
