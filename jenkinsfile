@@ -3,8 +3,8 @@ pipeline {
     
     environment {
         BRANCH_NAME = "${env.GIT_BRANCH}"
-        GCP_PROJECT_ID = 'jenkinsgpc' // ID del proyecto en GCP
-        CLOUD_SERVICE_ACCOUNT = '606820346362-compute@developer.gserviceaccount.com' // Cuenta de servicio de Cloud Build
+        GCP_PROJECT_ID = "${env.GCP_PROJECT_ID}" // Utiliza la variable de entorno para el ID del proyecto en GCP
+        CLOUD_SERVICE_ACCOUNT = "${env.CLOUD_SERVICE_ACCOUNT}" // Utiliza la variable de entorno para la cuenta de servicio de Cloud Build
     }
     
     stages {
