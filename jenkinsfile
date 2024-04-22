@@ -33,10 +33,12 @@ pipeline {
                     """
                     
                     // Leer la salida de la compilación desde el archivo temporal y mostrarla en la salida de consola
+                    sh 'cat cloud_build_output.txt'
+                    
+                    // Verificar si hubo errores en la compilación
                     def output = readFile('cloud_build_output.txt').trim()
                     println(output)
                     
-                    // Verificar si hubo errores en la compilación
                     if (output.contains('ERROR')) {
                         error 'Error durante la compilación de Cloud Build'
                     }
