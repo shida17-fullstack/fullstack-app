@@ -20,15 +20,13 @@ steps:
     args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend']
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
-  # Paso de depuración para verificar el contenido de output/suggested antes de la operación
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
+  - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
-      - '-c'
-      - |
-        echo "Contenido de output/suggested ANTES de la operación de despliegue:"
-        ls -la output/suggested
-        # Agrega aquí cualquier otro comando de depuración necesario
+      - 'run'
+      - '--filename=./api/deployment-backend.yaml'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend'
+      - '--location=us-central1-c'
+      - '--cluster=jenkins-cicd-cluster'
 
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
@@ -37,16 +35,6 @@ steps:
       - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend'
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
-
-  # Paso de depuración para verificar el contenido de output/suggested después de la operación
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        echo "Contenido de output/suggested DESPUÉS de la operación de despliegue:"
-        ls -la output/suggested
-        # Agrega aquí cualquier otro comando de depuración necesario
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
