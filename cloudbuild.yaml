@@ -4,12 +4,12 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:$COMMIT_SHA'  # Etiqueta única basada en el SHA del commit
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'  # No se usa el identificador único
       - './api'
   - name: 'gcr.io/cloud-builders/docker'
     args: 
       - 'push'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:$COMMIT_SHA'
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'
 
   # Paso para construir y empujar la imagen Docker del frontend a GCR
   - name: 'gcr.io/cloud-builders/docker'
@@ -28,7 +28,7 @@ steps:
     args:
       - 'run'
       - '--filename=./api/deployment-backend.yaml'
-      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend:$COMMIT_SHA'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend'
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
