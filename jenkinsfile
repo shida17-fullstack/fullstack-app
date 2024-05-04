@@ -5,6 +5,7 @@ pipeline {
         BRANCH_NAME = "${env.GIT_BRANCH}"
         GCP_PROJECT_ID = "${env.GCP_PROJECT_ID}" // Utiliza la variable de entorno para el ID del proyecto en GCP
         CLOUD_SERVICE_ACCOUNT = "${env.CLOUD_SERVICE_ACCOUNT}" // Utiliza la variable de entorno para la cuenta de servicio de Cloud Build
+        COMMIT_SHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim() // Obtiene el SHA del commit actual
     }
     
     stages {
@@ -24,6 +25,7 @@ pipeline {
                     sh """
                         gcloud builds submit \
                         --config=cloudbuild.yaml \
+                        --substitutions=_COMMIT_SHA=${COMMIT_SHA} \
                         --project=${GCP_PROJECT_ID} \
                         --account=${CLOUD_SERVICE_ACCOUNT}
                     """
