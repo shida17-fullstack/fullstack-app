@@ -4,7 +4,7 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'  # No se usa el identificador único
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend'
       - './api'
   - name: 'gcr.io/cloud-builders/docker'
     args: 
@@ -16,12 +16,12 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:$COMMIT_SHA'  # Etiqueta única basada en el SHA del commit
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:${_COMMIT_SHA}'  # Etiqueta única basada en el SHA del commit
       - './site'
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'push'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:$COMMIT_SHA'
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:${_COMMIT_SHA}'
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -36,7 +36,7 @@ steps:
     args:
       - 'run'
       - '--filename=./site/deployment-frontend.yaml'
-      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend:$COMMIT_SHA'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend:${_COMMIT_SHA}'
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
