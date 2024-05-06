@@ -1,16 +1,4 @@
 steps:
-  # Paso para verificar si el directorio output/suggested está vacío
-  - name: 'gcr.io/cloud-builders/gsutil'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        if gsutil ls -r gs://proyecto-jenkins-gcp/output/suggested | grep -q .; then
-          echo "El directorio output/suggested no está vacío."
-        else
-          echo "El directorio output/suggested está vacío. Puede continuar."
-        fi
-
   # Pasos anteriores para construir y empujar las imágenes Docker
 
   # Paso para construir y empujar la imagen Docker del backend a GCR
@@ -43,7 +31,7 @@ steps:
     args:
       - '-c'
       - |
-        gsutil -m cp -r gs://gcr.io/jenkinsgpc/* gs://proyecto-jenkins-gcp/artifacts/
+        gcloud artifacts docker images list --repository=jenkinsgpc --format="get(name)" --format="value(name)" | xargs -I {} gcloud artifacts docker images describe {} --format="value(imageUri)" | gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
