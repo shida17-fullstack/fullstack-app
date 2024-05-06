@@ -1,30 +1,44 @@
 steps:
+  # Paso para verificar si el directorio output/suggested está vacío
+  - name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        if gsutil ls -r gs://proyecto-jenkins-gcp/output/suggested | grep -q .; then
+          echo "El directorio output/suggested no está vacío."
+        else
+          echo "El directorio output/suggested está vacío. Puede continuar."
+        fi
+
+  # Pasos anteriores para construir y empujar las imágenes Docker
+
   # Paso para construir y empujar la imagen Docker del backend a GCR
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1' # Agregamos la etiqueta v1
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
       - './api'
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'] # Empujamos la imagen con la etiqueta v1
+    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1']
 
   # Paso para construir y empujar la imagen Docker del frontend a GCR
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
       - '-t'
-      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1' # Agregamos la etiqueta v1
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
       - './site'
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'] # Empujamos la imagen con la etiqueta v1
+    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1']
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - 'run'
       - '--filename=./api/deployment-backend.yaml'
-      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend:v1' # Actualizamos la imagen con la etiqueta v1
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
@@ -32,17 +46,17 @@ steps:
     args:
       - 'run'
       - '--filename=./site/deployment-frontend.yaml'
-      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1' # Actualizamos la imagen con la etiqueta v1
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
   objects:
-    location: 'gs://proyecto-jenkins-gcp/'  # Ubicación para almacenar las imágenes Docker y los artefactos
+    location: 'gs://proyecto-jenkins-gcp/'  
     paths:
-      - 'api/*'  # Ruta para los artefactos del backend
-      - 'site/*'  # Ruta para los artefactos del frontend
+      - 'api/*'  
+      - 'site/*'  
 
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
