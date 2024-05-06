@@ -26,21 +26,12 @@ steps:
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
 
   # Paso adicional para copiar las imágenes Docker desde Artifact Registry a Cloud Storage
-  - name: 'gcr.io/cloud-builders/gsutil'
+  - name: 'gcr.io/cloud-builders/gcloud'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        gcloud artifacts files list \
-          --project=jenkinsgpc \
-          --repository=gcr.io \
-          --location=us \
-          --format="value(name)" | \
-        xargs -I {} gcloud artifacts files describe {} \
-          --project=jenkinsgpc \
-          --repository=gcr.io \
-          --location=us \
-          --format='value(name)' | \
+        gcloud artifacts docker images list --location=us --repository=gcr.io/jenkinsgpc --project=jenkinsgpc --format="value(imageUri)" | \
         gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
