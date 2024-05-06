@@ -31,8 +31,16 @@ steps:
     args:
       - '-c'
       - |
-        gcloud artifacts docker images list gcr.io --format="value(name)" | \
-        xargs -I {} gcloud artifacts docker images describe {} --format='value(imageUri)' | \
+        gcloud artifacts files list \
+          --project=jenkinsgpc \
+          --repository=gcr.io \
+          --location=us \
+          --format="value(name)" | \
+        xargs -I {} gcloud artifacts files describe {} \
+          --project=jenkinsgpc \
+          --repository=gcr.io \
+          --location=us \
+          --format='value(name)' | \
         gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
