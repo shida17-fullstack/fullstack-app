@@ -1,7 +1,7 @@
 steps:
   # Pasos anteriores para construir y empujar las imágenes Docker
 
-  # Paso para construir y empujar la imagen Docker del backend a GCR
+  # Paso para construir y empujar la imagen Docker del backend a Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -13,7 +13,7 @@ steps:
       - 'push'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
 
-  # Paso para construir y empujar la imagen Docker del frontend a GCR
+  # Paso para construir y empujar la imagen Docker del frontend a Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
     args:
       - 'build'
@@ -24,15 +24,6 @@ steps:
     args: 
       - 'push'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
-
-  # Paso adicional para copiar las imágenes Docker desde Artifact Registry a Cloud Storage
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud artifacts docker images list --location=us --repository=gcr.io/jenkinsgpc --project=jenkinsgpc --format="value(imageUri)" | \
-        gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -51,14 +42,5 @@ steps:
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
-# Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
-artifacts:
-  objects:
-    location: 'gs://proyecto-jenkins-gcp/'  
-    paths:
-      - 'api/*'  
-      - 'site/*'  
-
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
-
