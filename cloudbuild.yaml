@@ -31,7 +31,7 @@ steps:
     args:
       - '-c'
       - |
-        gcloud artifacts docker images list --location=us --repository=gcr.io/jenkinsgpc --project=jenkinsgpc --format="value(imageUri)" | \
+        gcloud artifacts docker images list --project=jenkinsgpc --format="value(imageUri)" | \
         gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
@@ -61,3 +61,4 @@ artifacts:
 
 # Especifica el nombre del bucket para los registros de la compilación
 logsBucket: 'gs://proyecto-jenkins-gcp'
+
