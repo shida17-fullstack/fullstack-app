@@ -31,7 +31,24 @@ steps:
     args:
       - '-c'
       - |
-        gcloud artifacts docker images list --repository=jenkinsgpc --format="get(name)" --format="value(name)" | xargs -I {} gcloud artifacts docker images describe {} --format="value(imageUri)" | gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
+        gcloud artifacts list --repository=jenkinsgpc --format="get(name)" | xargs -I {} gcloud artifacts docker images describe {} --format="value(imageUri)" | gsutil -m cp -r -I gs://proyecto-jenkins-gcp/artifacts/
+
+  # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args:
+      - 'run'
+      - '--filename=./api/deployment-backend.yaml'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
+      - '--location=us-central1-c'
+      - '--cluster=jenkins-cicd-cluster'
+
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args:
+      - 'run'
+      - '--filename=./site/deployment-frontend.yaml'
+      - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
+      - '--location=us-central1-c'
+      - '--cluster=jenkins-cicd-cluster'
 
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
