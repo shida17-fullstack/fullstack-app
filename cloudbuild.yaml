@@ -21,7 +21,9 @@ steps:
       - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
       - './api'
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1']
+    args: 
+      - 'push'
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
 
   # Paso para construir y empujar la imagen Docker del frontend a GCR
   - name: 'gcr.io/cloud-builders/docker'
@@ -31,7 +33,9 @@ steps:
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
       - './site'
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1']
+    args: 
+      - 'push'
+      - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
 
   # Pasos para desplegar la aplicación en Kubernetes utilizando gke-deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -56,16 +60,16 @@ steps:
       - '-m'
       - 'cp'
       - '-r'
-      - 'gs://jenkinsgpc_cloudbuild/*'
+      - 'gs://jenkinsgpc_cloudbuild/'
       - 'gs://proyecto-jenkins-gcp/artifacts/'
 
-# Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
-artifacts:
-  objects:
-    location: 'gs://proyecto-jenkins-gcp/'  
-    paths:
-      - 'api/*'  
-      - 'site/*'  
+  # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
+  artifacts:
+    objects:
+      location: 'gs://proyecto-jenkins-gcp/'  
+      paths:
+        - 'api/*'  
+        - 'site/*'  
 
-# Especifica el nombre del bucket para los registros de la compilación
-logsBucket: 'gs://proyecto-jenkins-gcp'
+  # Especifica el nombre del bucket para los registros de la compilación
+  logsBucket: 'gs://proyecto-jenkins-gcp'
