@@ -42,5 +42,5 @@ steps:
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
-# Especifica el nombre del bucket para los registros de la compilación
-logsBucket: 'gs://proyecto-jenkins-gcp'
+    # Especifica el nombre del bucket para los registros de la compilación
+    logsBucket: 'gs://proyecto-jenkins-gcp'
