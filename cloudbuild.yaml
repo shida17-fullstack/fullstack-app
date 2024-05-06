@@ -50,6 +50,15 @@ steps:
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
 
+  # Paso adicional para copiar las imágenes Docker a Cloud Storage
+  - name: 'gcr.io/cloud-builders/gsutil'
+    args:
+      - '-m'
+      - 'cp'
+      - '-r'
+      - 'gs://jenkinsgpc_cloudbuild/*'
+      - 'gs://proyecto-jenkins-gcp/artifacts/'
+
 # Especifica la ubicación del bucket de Cloud Storage para almacenar las imágenes y artefactos
 artifacts:
   objects:
