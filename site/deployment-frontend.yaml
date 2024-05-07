@@ -17,6 +17,11 @@ spec:
         image: gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1
         ports:
         - containerPort: 80
+        resources:
+          requests:
+            memory: "256Mi"   # Establece la memoria solicitada
+          limits:
+            memory: "512Mi"   # Establece el límite de memoria
 ---
 apiVersion: v1
 kind: Service
@@ -30,4 +35,3 @@ spec:
       port: 80
       targetPort: 80
   type: LoadBalancer
-
