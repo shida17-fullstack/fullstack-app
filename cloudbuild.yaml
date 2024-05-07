@@ -19,7 +19,7 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
-      - '${FRONTEND}'  # Utilizamos la variable de sustitución aquí
+      - '${_FRONTEND}'  # Utilizamos la variable de sustitución aquí
   - name: 'gcr.io/cloud-builders/docker'
     args: 
       - 'push'
@@ -47,4 +47,4 @@ logsBucket: 'gs://jenkinsgpc_cloudbuild'
 
 # Definición de variables de sustitución
 substitutions:
-  FRONTEND: './site'
+  _FRONTEND: './site'
