@@ -41,3 +41,6 @@ steps:
       - '--image=gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
       - '--location=us-central1-c'
       - '--cluster=jenkins-cicd-cluster'
+
+# Especifica el nombre del bucket para los registros de la compilación
+logsBucket: 'gs://jenkinsgpc_cloudbuild'
