@@ -19,7 +19,7 @@ steps:
       - 'build'
       - '-t'
       - 'gcr.io/jenkinsgpc/jenkinsgpc-frontend:v1'
-      - '${_FRONTEND}'  # Utilizamos la variable de sustitución aquí
+      - '$_FRONTEND'  # Utilizamos la variable de sustitución aquí
   - name: 'gcr.io/cloud-builders/docker'
     args: 
       - 'push'
