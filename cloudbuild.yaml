@@ -1,5 +1,9 @@
 steps:
   # Pasos anteriores para construir y empujar las imágenes Docker
+  
+  # Eliminar el contenido del directorio "expanded/suggested"
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args: ['rm', '-rf', 'expanded/suggested']
 
   # Paso para construir y empujar la imagen Docker del backend a Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -34,10 +38,12 @@ steps:
       - '--app=jenkinsgpc-backend'
       - '--version=v1'
       - '--output=expanded'
+      - '--namespace=my-backend-namespace'  # Reemplaza "my-backend-namespace" con el namespace deseado para el backend
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - 'apply'
       - '--filename=./api/deployment-backend.yaml'
+      - '--namespace=my-backend-namespace'  # Reemplaza "my-backend-namespace" con el namespace deseado para el backend
       - '--cluster=jenkins-cicd-cluster'
       - '--location=us-central1-c'
 
@@ -49,10 +55,12 @@ steps:
       - '--app=jenkinsgpc-frontend'
       - '--version=v1'
       - '--output=expanded'
+      - '--namespace=my-frontend-namespace'  # Reemplaza "my-frontend-namespace" con el namespace deseado para el frontend
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - 'apply'
       - '--filename=./site/deployment-frontend.yaml'
+      - '--namespace=my-frontend-namespace'  # Reemplaza "my-frontend-namespace" con el namespace deseado para el frontend
       - '--cluster=jenkins-cicd-cluster'
       - '--location=us-central1-c'
 
