@@ -30,12 +30,6 @@ steps:
       - '--app=jenkinsgpc-frontend'
       - '--version=v1'
       - '--output=expanded'
-  - name: 'gcr.io/cloud-builders/gke-deploy'
-    args:
-      - 'apply'
-      - '--filename=./site/deployment-frontend.yaml'
-      - '--cluster=jenkins-cicd-cluster'
-      - '--location=us-central1-c'
 
   # Paso para construir y empujar la imagen Docker del backend a Artifact Registry
   - name: 'gcr.io/cloud-builders/docker'
@@ -57,7 +51,7 @@ steps:
       - '--image=gcr.io/jenkinsgpc/jenkinsgpc-backend:v1'
       - '--app=jenkinsgpc-backend'
       - '--version=v1'
-      - '--output=expanded'
+      - '--output=backend_expanded'
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - 'apply'
