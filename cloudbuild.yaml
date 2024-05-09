@@ -1,6 +1,12 @@
 steps:
   # Pasos anteriores para construir y empujar las imágenes Docker
   
+  # Paso para ejecutar las pruebas unitarias del backend
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['install', '--prefix', './api']
+  - name: 'gcr.io/cloud-builders/npm'
+    args: ['run', 'test', '--prefix', './api']
+
   # Eliminar el contenido del directorio "expanded/suggested"
   - name: 'gcr.io/cloud-builders/gke-deploy'
     entrypoint: 'bash'
